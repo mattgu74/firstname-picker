@@ -5,7 +5,8 @@
     "start": "parcel",
     "build": "parcel build",
     "api": "json-server --watch db.json",
-    "deploy": "firebase deploy"
+    "deploy": "firebase deploy",
+    "ci": "echo \"Test and eslint to add !\""
   },
   "devDependencies": {
     "json-server": "^0.17.1",
