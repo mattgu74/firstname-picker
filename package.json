@@ -1,0 +1,24 @@
+{
+  "name": "firstname_front",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build",
+    "api": "json-server --watch db.json",
+    "deploy": "firebase deploy"
+  },
+  "devDependencies": {
+    "json-server": "^0.17.1",
+    "parcel": "latest",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "firebase": "^9.13.0",
+    "firebaseui": "^6.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-firebaseui": "^6.0.0",
+    "react-router-dom": "^6.4.3",
+    "uuid": "^9.0.0"
+  }
+}
