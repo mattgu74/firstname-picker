@@ -29,19 +29,19 @@ export default function ProjectsList() {
     }, [auth]);
 
     useEffect(() => {
-        const q = query(collection(db, "projects"), where("allowedUsers", "array-contains", auth.currentUser.uid));
-        onSnapshot(q, (querySnapshot) => {
-          let results = [];
-          querySnapshot.forEach((doc) => {
-                let result = doc.data();
-                result.id = doc.id;
-                console.log("allowed", result);
-                results.push(result);
-          });
-          setAllowedProjects(results);
-        });
+        if(auth && auth.currentUser.emailVerified) {
+            const q = query(collection(db, "projects"), where("allowedUsers", "array-contains", auth.currentUser.email));
+            onSnapshot(q, (querySnapshot) => {
+            let results = [];
+            querySnapshot.forEach((doc) => {
+                    let result = doc.data();
+                    result.id = doc.id;
+                    results.push(result);
+            });
+            setAllowedProjects(results);
+            });
+        }
     }, [auth]);
-
 
     return <ul>
         {

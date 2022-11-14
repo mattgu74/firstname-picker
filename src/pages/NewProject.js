@@ -11,6 +11,7 @@ const auth = getAuth(app);
 
 const addProject = (project) => {
     project.userId = auth.currentUser.uid;
+    project.userEmail = auth.currentUser.email;
     project.allowedUsers = [];
     addDoc(collection(db, "projects"), project).then(
         (obj) => console.log(obj)

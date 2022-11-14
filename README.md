@@ -47,3 +47,11 @@ Next topics in mind :
 - [] Prepare the view to do match
 - [] Make a summary view of the project to see the results (nb of match done / ranks of firstname (by person that play, and the version that includes everyone) / nb firstname not discarded that stay in the run...)
 - [] Do some UI/Css (find a theme ? / use Material UI ?)
+
+
+### 14th november 2022
+
+- [x] Add a way for someone to invite an email inside his own project (to get your wife onboard)
+
+And then how to remove if you made a mistake.
+
