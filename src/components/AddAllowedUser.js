@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
 
 import { getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 
 const app = getApp();

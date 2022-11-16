@@ -40,7 +40,7 @@ It's time to sleep we are now the 10th ;)
 
 Next topics in mind : 
 
-- [] Add a way for someone to invite an email inside his own project (to get your wife onboard)
+- [x] Add a way for someone to invite an email inside his own project (to get your wife onboard)
 - [] Think about how to store the ranking, in this non relational database
 - [] Add a view to see list of firstname added to a project / And allow to add more. (At the end I will pre-import a databse from french statistics institue INSEE, but to start a small dataset managed manually will be easier to manipulate and discover).
 - [] Implement the ranking algorithm
@@ -53,5 +53,20 @@ Next topics in mind :
 
 - [x] Add a way for someone to invite an email inside his own project (to get your wife onboard)
 
-And then how to remove if you made a mistake.
+And then how to remove email address if you made a mistake.
 
+
+### 16th november 2022
+
+- [x] Think about how to store the ranking, in this non relational database
+- [x] Add a view to see list of firstname added to a project / And allow to add more.
+- [x] Implement the ranking algorithm
+- [x] Prepare the view to do match
+
+Very effective night ! It starts to be usable ;) 
+Note of future topics I have in mind : 
+
+- [] Switch back everything to French (my firstname database will be french one anyway...)
+- [] Clean an redo the navigation/menu (I have blank page useless like Home/Users...)
+- [] do a ranking by player (in addition of the global one)
+- [] Is there an interest to store the matches history ? 

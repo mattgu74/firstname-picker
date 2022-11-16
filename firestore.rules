@@ -1,18 +1,26 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /admins/{userId} {
-      allow read, update, delete: if request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    function isAuth() {
+      return request.auth != null;
     }
 
-    match /users/{userId} {
-      allow read, update, delete: if request.auth != null && (request.auth.uid == userId || exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+    function isAdmin(project) {
+      return isAuth() && request.auth.uid == project.userId;
+    }
+
+    function isAllowed(project) {
+      return isAuth() && (isAdmin(project) || request.auth.token.email_verified && request.auth.token.email in project.allowedUsers);
     }
 
     match /projects/{projectId} {
-      allow read: if request.auth != null && (request.auth.uid == resource.data.userId || (request.auth.token.email_verified && request.auth.token.email in resource.data.allowedUsers));
-      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow create: if request.auth != null;
+      allow read: if isAllowed(resource.data);
+      allow update, delete: if isAdmin(resource.data);
+      allow create: if isAuth();
+
+      match /firstnames/{firstname} {
+        allow read, update, delete, create: if isAllowed(get(/databases/$(database)/documents/projects/$(projectId)).data);
+      }
     }
 
     match /{document=**} {
