@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import Container from 'react-bootstrap/Container';
+
 import {loading} from "./utils/loaders";
 
 // FIREBASE
@@ -25,9 +27,7 @@ const auth = getAuth(app);
 
 const Layout = React.lazy(() => import('./pages/Layout'));
 const Home = React.lazy(() => import('./pages/Home'));
-const Users = React.lazy(() => import('./pages/Users'));
 const Project = React.lazy(() => import('./pages/Project'));
-const Projects = React.lazy(() => import('./pages/Projects'));
 const NewProject = React.lazy(() => import('./pages/NewProject'));
 const Match = React.lazy(() => import('./pages/Match'));
 const Error404 = React.lazy(() => import('./pages/Error404'));
@@ -64,11 +64,16 @@ export default function App() {
 
     if (!isSignedIn) {
         return (
-            <div>
-            <h1>Firstname Picker !</h1>
-            <p>Please sign-in:</p>
-            <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
-            </div>
+            <Container className="p-3">
+                <Container className="p-5 mb-4 bg-light rounded-3">
+                    <h1 className="header">Firstname-Picker</h1>
+                </Container>
+                <Container className="p-5 mb-4 bg-light rounded-3">
+                    <p>Firstname-Picker is an app to help couple find a firstname for their future new-born.</p>
+                    <p>In order to use the App please login first :</p>
+                    <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
+                </Container>
+            </Container>
         );
     }
 
@@ -77,11 +82,9 @@ export default function App() {
             <Routes>
                 <Route path="/" element={loading(<Layout />, <></>)}>
                     <Route index element={loading(<Home />)} />
-                    <Route path="users" element={loading(<Users />)} />
-                    <Route path="projects" element={loading(<Projects />)} />
                     <Route path="projects/:id/match" element={loading(<Match />)} />
                     <Route path="projects/:id" element={loading(<Project />)} />
-                    <Route path="projects/new" element={loading(<NewProject />)} />
+                    <Route path="new" element={loading(<NewProject />)} />
                     <Route path="*" element={loading(<Error404 />)} />
                 </Route>
             </Routes>

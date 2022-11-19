@@ -10,6 +10,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 import Project from './Project';
+import { Col } from 'react-bootstrap';
 
 export default function ProjectsList() {
     const [projects, setProjects] = React.useState([]);
@@ -43,16 +44,18 @@ export default function ProjectsList() {
         }
     }, [auth]);
 
-    return <ul>
+    return <>
+        {projects.length > 0 && <h2>Your projects</h2>}
         {
             projects.map(p => (
-                <li key={p.id}><Project project={p} /></li>
+                <Col key={p.id} className="p-5 mb-4 bg-light rounded-1"><Project project={p} /></Col>
             ))
         }
+        {allowedProjects.length > 0 && <h2>Projects shared with you</h2>}
         {
             allowedProjects.map(p => (
-                <li key={p.id}><Project project={p} /></li>
+                <Col key={p.id} className="p-5 mb-4 bg-light rounded-1"><Project project={p} /></Col>
             ))
         }
-    </ul>;
+    </>;
 }

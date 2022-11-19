@@ -22,8 +22,6 @@ const addAllowedUser = (project, email) => {
     updateDoc(
         doc(db, "projects", project.id),
         {allowedUsers: project.allowedUsers}
-    ).then(
-        (obj) => console.log(obj)
     );
     return true;
 };
@@ -61,6 +59,7 @@ const AddAllowedUser = (props) => {
                 name="email"
                 placeholder="email@gmail.com"
                 value={email}
+                onChange={handleChange}
             />
             <button>Add this email</button> 
             {error !== null && <span className="red">{error}</span>}

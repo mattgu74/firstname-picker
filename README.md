@@ -70,3 +70,9 @@ Note of future topics I have in mind :
 - [] Clean an redo the navigation/menu (I have blank page useless like Home/Users...)
 - [] do a ranking by player (in addition of the global one)
 - [] Is there an interest to store the matches history ? 
+
+
+### 19th november 2022
+
+- [x] Do some UI/Css (still pending, bootstrap finally choosen)
+- [x] Clean a little bit navigation, remove useless files...
