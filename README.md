@@ -41,10 +41,10 @@ It's time to sleep we are now the 10th ;)
 Next topics in mind : 
 
 - [x] Add a way for someone to invite an email inside his own project (to get your wife onboard)
-- [] Think about how to store the ranking, in this non relational database
-- [] Add a view to see list of firstname added to a project / And allow to add more. (At the end I will pre-import a databse from french statistics institue INSEE, but to start a small dataset managed manually will be easier to manipulate and discover).
-- [] Implement the ranking algorithm
-- [] Prepare the view to do match
+- [x] Think about how to store the ranking, in this non relational database
+- [x] Add a view to see list of firstname added to a project / And allow to add more. (At the end I will pre-import a databse from french statistics institue INSEE, but to start a small dataset managed manually will be easier to manipulate and discover).
+- [x] Implement the ranking algorithm
+- [x] Prepare the view to do match
 - [] Make a summary view of the project to see the results (nb of match done / ranks of firstname (by person that play, and the version that includes everyone) / nb firstname not discarded that stay in the run...)
 - [] Do some UI/Css (find a theme ? / use Material UI ?)
 
@@ -67,7 +67,7 @@ Very effective night ! It starts to be usable ;)
 Note of future topics I have in mind : 
 
 - [] Switch back everything to French (my firstname database will be french one anyway...)
-- [] Clean an redo the navigation/menu (I have blank page useless like Home/Users...)
+- [x] Clean an redo the navigation/menu (I have blank page useless like Home/Users...)
 - [] do a ranking by player (in addition of the global one)
 - [] Is there an interest to store the matches history ? 
 
@@ -76,3 +76,4 @@ Note of future topics I have in mind :
 
 - [x] Do some UI/Css (still pending, bootstrap finally choosen)
 - [x] Clean a little bit navigation, remove useless files...
+- [x] Add preloaded dataset to fill firstnames
