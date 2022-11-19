@@ -4,9 +4,12 @@ import { useParams } from "react-router-dom";
 import { getApp } from "firebase/app";
 import { getFirestore, doc, collection, getDoc, query, onSnapshot, writeBatch, updateDoc } from "firebase/firestore";
 import AddFirstname from "../components/AddFirstname";
+import { getEloRank } from "../utils/utils";
+import { getAuth } from "firebase/auth";
 
 const app = getApp();
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 /* ELO Algorithm */
 function getRatingDelta(myRating, opponentRating, myGameResult) {
@@ -65,19 +68,33 @@ const Match = () => {
     const winBattle = (idx) => {
         let player_0 = getNewRating(battle[0].rankElo, battle[1].rankElo, 1 - idx);
         let player_1 = getNewRating(battle[1].rankElo, battle[0].rankElo, idx);
+        let user_player_0 = getNewRating(getEloRank(battle[0], auth.currentUser), getEloRank(battle[1], auth.currentUser), 1 - idx);
+        let user_player_1 = getNewRating(getEloRank(battle[1], auth.currentUser), getEloRank(battle[0], auth.currentUser), idx);
         const batch = writeBatch(db);
-        batch.update(doc(db, "projects", id, "firstnames", battle[0].id), {"rankElo": player_0});
-        batch.update(doc(db, "projects", id, "firstnames", battle[1].id), {"rankElo": player_1});
+        const key = "rankEloUser." + auth.currentUser.id;
+        batch.update(
+            doc(db, "projects", id, "firstnames", battle[0].id),
+            {"rankElo": player_0, [key]: user_player_0});
+        batch.update(
+            doc(db, "projects", id, "firstnames", battle[1].id),
+            {"rankElo": player_1, [key]: user_player_1});
         batch.commit();
         setBattle([]);
     };
 
     const hide = (idx) => {
+        const key = "hideUser." + auth.currentUser.id;
         if(idx <= 0.5) {
-            updateDoc(doc(db, "projects", id, "firstnames", battle[0].id), {"hide": true});
+            updateDoc(
+                doc(db, "projects", id, "firstnames", battle[0].id),
+                {"hide": true, [key]: true }
+            );
         }
         if(idx >= 0.5) {
-            updateDoc(doc(db, "projects", id, "firstnames", battle[1].id), {"hide": true});
+            updateDoc(
+                doc(db, "projects", id, "firstnames", battle[1].id),
+                {"hide": true, [key]: true }
+            );
         }
         setBattle([])
     }
@@ -107,10 +124,6 @@ const Match = () => {
         <AddFirstname project={project} /> <br />
         <h2>Play</h2>
         {match}
-        <h2>Rank</h2>
-        <ul>
-        {firstnames.map(firstname => <li>{firstname.firstname} - {firstname.rankElo} ({firstname.hide ? 1 : 0})</li>)}
-        </ul>
     </>;
 };
 

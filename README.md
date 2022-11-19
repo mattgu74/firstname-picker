@@ -77,3 +77,4 @@ Note of future topics I have in mind :
 - [x] Do some UI/Css (still pending, bootstrap finally choosen)
 - [x] Clean a little bit navigation, remove useless files...
 - [x] Add preloaded dataset to fill firstnames
+- [x] do a ranking by player (in addition of the global one)

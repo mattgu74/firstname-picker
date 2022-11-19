@@ -8,6 +8,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import AddAllowedUser from "../components/AddAllowedUser";
 import { getAuth } from "firebase/auth";
+import { getEloRank } from "../utils/utils";
 
 const app = getApp();
 const db = getFirestore(app);
@@ -25,11 +26,24 @@ const removeAllowedUser = (project, email) => {
     );
 };
 
+const getHide = (firstnameObj, currentUser) => {
+    if (firstnameObj.hideUser === undefined) {
+        return false;
+    }
+
+    if (firstnameObj.hideUser[currentUser.id] === undefined) {
+        return false;
+    }
+
+    return firstnameObj.hideUser[currentUser.id];
+}
+
 const Project = () => {
     const { id } = useParams();
 
     const [project, setProject] = useState(null);
     const [firstnames, setFirstnames] = useState([]);
+    const [userFirstnames, setUserFirstnames] = useState([]);
     const [totalCount, setTotalCount] = useState([]);
 
     useEffect(() => {
@@ -45,6 +59,7 @@ const Project = () => {
         const q = query(collection(db, "projects", id, "firstnames"));
         onSnapshot(q, (querySnapshot) => {
           let results = [];
+          let userResults = [];
           let _totalCount = 0;
           querySnapshot.forEach((doc) => {
                 let result = doc.data();
@@ -53,9 +68,13 @@ const Project = () => {
                 if(!result.hide) {
                     results.push(result);
                 }
+                if(!getHide(result, auth.currentUser.email)) {
+                    userResults.push(result);
+                }
           });
           setTotalCount(_totalCount);
           setFirstnames(results.sort((a, b) => b.rankElo - a.rankElo));
+          setUserFirstnames(userResults.sort((a, b) => getEloRank(b, auth.currentUser) - getEloRank(a, auth.currentUser)));
         });
     }, [id]);
 
@@ -92,13 +111,21 @@ const Project = () => {
                     </ul>
                 </Col>
             </Row>
+            <Row>
+                <Col>
+                    <h2>Global Rank (Top 20)</h2>
+                    <ul>
+                        {firstnames.slice(0,20).map(firstname => <li>{firstname.firstname} - {firstname.rankElo}</li>)}
+                    </ul>
+                </Col>
+                <Col>
+                    <h2>Your Rank (Top 20)</h2>
+                    <ul>
+                        {userFirstnames.slice(0,20).map(firstname => <li>{firstname.firstname} - {getEloRank(firstname, auth.currentUser)}</li>)}
+                    </ul>
+                </Col>
+            </Row>
         </Container>
-
-        
-        <h2>Rank</h2>
-        <ul>
-        {firstnames.map(firstname => <li>{firstname.firstname} - {firstname.rankElo} ({firstname.hide ? 1 : 0})</li>)}
-        </ul>
     </>;
 };
 
