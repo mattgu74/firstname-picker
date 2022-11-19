@@ -31,11 +31,11 @@ const getHide = (firstnameObj, currentUser) => {
         return false;
     }
 
-    if (firstnameObj.hideUser[currentUser.id] === undefined) {
+    if (firstnameObj.hideUser[currentUser.uid] === undefined) {
         return false;
     }
 
-    return firstnameObj.hideUser[currentUser.id];
+    return firstnameObj.hideUser[currentUser.uid];
 }
 
 const Project = () => {
@@ -68,7 +68,7 @@ const Project = () => {
                 if(!result.hide) {
                     results.push(result);
                 }
-                if(!getHide(result, auth.currentUser.email)) {
+                if(!getHide(result, auth.currentUser)) {
                     userResults.push(result);
                 }
           });

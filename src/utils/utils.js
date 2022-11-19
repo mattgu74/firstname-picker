@@ -5,9 +5,9 @@ export function getEloRank(firstnameObj, currentUser) {
         return 1000;
     }
 
-    if (firstnameObj.rankEloUser[currentUser.id] === undefined) {
+    if (firstnameObj.rankEloUser[currentUser.uid] === undefined) {
         return 1000;
     }
 
-    return firstnameObj.rankEloUser[currentUser.id];
+    return firstnameObj.rankEloUser[currentUser.uid];
 };

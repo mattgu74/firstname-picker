@@ -6,6 +6,7 @@ import { getFirestore, doc, collection, getDoc, query, onSnapshot, writeBatch, u
 import AddFirstname from "../components/AddFirstname";
 import { getEloRank } from "../utils/utils";
 import { getAuth } from "firebase/auth";
+import { Col, Row } from "react-bootstrap";
 
 const app = getApp();
 const db = getFirestore(app);
@@ -71,7 +72,7 @@ const Match = () => {
         let user_player_0 = getNewRating(getEloRank(battle[0], auth.currentUser), getEloRank(battle[1], auth.currentUser), 1 - idx);
         let user_player_1 = getNewRating(getEloRank(battle[1], auth.currentUser), getEloRank(battle[0], auth.currentUser), idx);
         const batch = writeBatch(db);
-        const key = "rankEloUser." + auth.currentUser.id;
+        const key = "rankEloUser." + auth.currentUser.uid;
         batch.update(
             doc(db, "projects", id, "firstnames", battle[0].id),
             {"rankElo": player_0, [key]: user_player_0});
@@ -83,7 +84,7 @@ const Match = () => {
     };
 
     const hide = (idx) => {
-        const key = "hideUser." + auth.currentUser.id;
+        const key = "hideUser." + auth.currentUser.uid;
         if(idx <= 0.5) {
             updateDoc(
                 doc(db, "projects", id, "firstnames", battle[0].id),
@@ -111,18 +112,26 @@ const Match = () => {
             ])
         } else {
             match = <>
-                {battle[0].firstname} <button onClick={() => winBattle(0)}>Win</button><button onClick={() => hide(0)}>X</button><br />
-                VS <button onClick={() => winBattle(0.5)}>Tie</button><button onClick={() => hide(0.5)}>X</button><br />
-                {battle[1].firstname} <button onClick={() => winBattle(1)}>Win</button><button onClick={() => hide(1)}>X</button><br />
+            <Row className="justify-content-md-center">
+                <Col className="p-5 mb-4 bg-light rounded-3 center">
+                    {battle[0].firstname}<br />
+                    <button onClick={() => winBattle(0)}>Win</button><button onClick={() => hide(0)}>X</button><br />
+                </Col>
+                <Col className="p-5 mb-4 bg-light rounded-3 center">
+                    VS<br />
+                    <button onClick={() => winBattle(0.5)}>Tie</button><button onClick={() => hide(0.5)}>X</button><br />
+                </Col>
+                <Col className="p-5 mb-4 bg-light rounded-3 center">
+                    {battle[1].firstname}<br />
+                    <button onClick={() => winBattle(1)}>Win</button><button onClick={() => hide(1)}>X</button><br />
+                </Col>
+            </Row>
             </>;
         }
     }
 
     return <>
         <h1>Match for project #{project.title}</h1>
-        Nb firstname: {firstnames.length} <br />
-        <AddFirstname project={project} /> <br />
-        <h2>Play</h2>
         {match}
     </>;
 };
