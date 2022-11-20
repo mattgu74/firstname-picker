@@ -18,11 +18,10 @@ const Layout = () => {
         <Navbar bg="light" expand="lg">
             <Container>
             <LinkContainer to="/"><Navbar.Brand>Firstname-Picker</Navbar.Brand></LinkContainer>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Button variant="danger" className="d-flex" onClick={() => auth.signOut()}>Sign-out</Button>
             </Container>
         </Navbar>
-        <Container className="p-3">
+        <Container>
             <Outlet />
         </Container>
         </>

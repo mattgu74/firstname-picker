@@ -8,7 +8,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import AddAllowedUser from "../components/AddAllowedUser";
 import { getAuth } from "firebase/auth";
-import { getEloRank } from "../utils/utils";
+import { getEloRank, getHide } from "../utils/utils";
 
 const app = getApp();
 const db = getFirestore(app);
@@ -25,18 +25,6 @@ const removeAllowedUser = (project, email) => {
         {allowedUsers: project.allowedUsers}
     );
 };
-
-const getHide = (firstnameObj, currentUser) => {
-    if (firstnameObj.hideUser === undefined) {
-        return false;
-    }
-
-    if (firstnameObj.hideUser[currentUser.uid] === undefined) {
-        return false;
-    }
-
-    return firstnameObj.hideUser[currentUser.uid];
-}
 
 const Project = () => {
     const { id } = useParams();

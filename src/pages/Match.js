@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom";
 import { getApp } from "firebase/app";
 import { getFirestore, doc, collection, getDoc, query, onSnapshot, writeBatch, updateDoc } from "firebase/firestore";
 import AddFirstname from "../components/AddFirstname";
-import { getEloRank } from "../utils/utils";
+import { getEloRank, getHide } from "../utils/utils";
 import { getAuth } from "firebase/auth";
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 
 const app = getApp();
 const db = getFirestore(app);
@@ -50,9 +50,11 @@ const Match = () => {
           querySnapshot.forEach((doc) => {
                 let result = doc.data();
                 result.id = doc.id;
-                results.push(result);
+                if(!getHide(result, auth.currentUser)) {
+                    results.push(result);
+                }
           });
-          setFirstnames(results.sort((a, b) => b.rankElo - a.rankElo));
+          setFirstnames(results);
         });
     }, [id]);
 
@@ -66,39 +68,35 @@ const Match = () => {
 
     let match = <>Add more firstname first !</>;
 
-    const winBattle = (idx) => {
+    const winBattle = (idx, hide) => {
         let player_0 = getNewRating(battle[0].rankElo, battle[1].rankElo, 1 - idx);
         let player_1 = getNewRating(battle[1].rankElo, battle[0].rankElo, idx);
         let user_player_0 = getNewRating(getEloRank(battle[0], auth.currentUser), getEloRank(battle[1], auth.currentUser), 1 - idx);
         let user_player_1 = getNewRating(getEloRank(battle[1], auth.currentUser), getEloRank(battle[0], auth.currentUser), idx);
         const batch = writeBatch(db);
         const key = "rankEloUser." + auth.currentUser.uid;
+        const hideKey = "hideUser." + auth.currentUser.uid;
+        let data_0 = {"rankElo": player_0, [key]: user_player_0};
+        let data_1 = {"rankElo": player_1, [key]: user_player_1};
+        if (hide) {
+            if (idx>=0.5) {
+                data_0.hide = true;
+                data_0[hideKey] = true;
+            }
+            if (idx<=0.5) {
+                data_1.hide = true;
+                data_1[hideKey] = true;
+            }
+        }
         batch.update(
             doc(db, "projects", id, "firstnames", battle[0].id),
-            {"rankElo": player_0, [key]: user_player_0});
+            data_0);
         batch.update(
             doc(db, "projects", id, "firstnames", battle[1].id),
-            {"rankElo": player_1, [key]: user_player_1});
+            data_1);
         batch.commit();
         setBattle([]);
     };
-
-    const hide = (idx) => {
-        const key = "hideUser." + auth.currentUser.uid;
-        if(idx <= 0.5) {
-            updateDoc(
-                doc(db, "projects", id, "firstnames", battle[0].id),
-                {"hide": true, [key]: true }
-            );
-        }
-        if(idx >= 0.5) {
-            updateDoc(
-                doc(db, "projects", id, "firstnames", battle[1].id),
-                {"hide": true, [key]: true }
-            );
-        }
-        setBattle([])
-    }
 
     if (firstnames.length > 5) {
         if (battle.length == 0) {
@@ -113,17 +111,24 @@ const Match = () => {
         } else {
             match = <>
             <Row className="justify-content-md-center">
-                <Col className="p-5 mb-4 bg-light rounded-3 center">
-                    {battle[0].firstname}<br />
-                    <button onClick={() => winBattle(0)}>Win</button><button onClick={() => hide(0)}>X</button><br />
+                <Col className="p-5 bg-light rounded-3 text-center">
+                    <Button variant="danger" onClick={() => winBattle(1, true)}>X</Button><br /><br />
+                    <strong>{battle[0].firstname}</strong><br /><br />
+                    <Button variant="success" onClick={() => winBattle(0, false)}>Win</Button><br />
                 </Col>
-                <Col className="p-5 mb-4 bg-light rounded-3 center">
-                    VS<br />
-                    <button onClick={() => winBattle(0.5)}>Tie</button><button onClick={() => hide(0.5)}>X</button><br />
+                <Col className="p-5 bg-light rounded-3 text-center">
+                    <Button variant="danger" onClick={() => winBattle(0.5, true)}>X</Button><br /><br />
+                    <strong>VS</strong><br /><br />
+                    <Button variant="info" onClick={() => winBattle(0.5, false)}>Tie</Button><br />
                 </Col>
-                <Col className="p-5 mb-4 bg-light rounded-3 center">
-                    {battle[1].firstname}<br />
-                    <button onClick={() => winBattle(1)}>Win</button><button onClick={() => hide(1)}>X</button><br />
+                <Col className="p-5 bg-light rounded-3 text-center">
+                    <Button variant="danger" onClick={() => winBattle(0, true)}>X</Button><br /><br />
+                    <strong>{battle[1].firstname}</strong><br /><br />
+                    <Button variant="success" onClick={() => winBattle(1, false)}>Win</Button><br />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
                 </Col>
             </Row>
             </>;
@@ -131,7 +136,9 @@ const Match = () => {
     }
 
     return <>
-        <h1>Match for project #{project.title}</h1>
+        <Row>
+            <Col><h1>Match for project #{project.title}</h1></Col>
+        </Row>
         {match}
     </>;
 };
