@@ -15,7 +15,7 @@ service cloud.firestore {
 
     match /projects/{projectId} {
       allow read: if isAllowed(resource.data);
-      allow update, delete: if isAdmin(resource.data);
+      allow update, delete: if isAllowed(resource.data);
       allow create: if isAuth();
 
       match /firstnames/{firstname} {

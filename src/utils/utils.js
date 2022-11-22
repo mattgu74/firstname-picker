@@ -1,25 +1,25 @@
 
 
-export function getEloRank(firstnameObj, currentUser) {
+export function getEloRank(firstnameObj, userId) {
     if (firstnameObj.rankEloUser === undefined) {
         return 1000;
     }
 
-    if (firstnameObj.rankEloUser[currentUser.uid] === undefined) {
+    if (firstnameObj.rankEloUser[userId] === undefined) {
         return 1000;
     }
 
-    return firstnameObj.rankEloUser[currentUser.uid];
+    return firstnameObj.rankEloUser[userId];
 };
 
-export function getHide(firstnameObj, currentUser) {
+export function getHide(firstnameObj, userId) {
     if (firstnameObj.hideUser === undefined) {
         return false;
     }
 
-    if (firstnameObj.hideUser[currentUser.uid] === undefined) {
+    if (firstnameObj.hideUser[userId] === undefined) {
         return false;
     }
 
-    return firstnameObj.hideUser[currentUser.uid];
+    return firstnameObj.hideUser[userId];
 };

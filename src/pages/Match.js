@@ -50,7 +50,7 @@ const Match = () => {
           querySnapshot.forEach((doc) => {
                 let result = doc.data();
                 result.id = doc.id;
-                if(!getHide(result, auth.currentUser)) {
+                if(!getHide(result, auth.currentUser.uid)) {
                     results.push(result);
                 }
           });
@@ -71,8 +71,8 @@ const Match = () => {
     const winBattle = (idx, hide) => {
         let player_0 = getNewRating(battle[0].rankElo, battle[1].rankElo, 1 - idx);
         let player_1 = getNewRating(battle[1].rankElo, battle[0].rankElo, idx);
-        let user_player_0 = getNewRating(getEloRank(battle[0], auth.currentUser), getEloRank(battle[1], auth.currentUser), 1 - idx);
-        let user_player_1 = getNewRating(getEloRank(battle[1], auth.currentUser), getEloRank(battle[0], auth.currentUser), idx);
+        let user_player_0 = getNewRating(getEloRank(battle[0], auth.currentUser.uid), getEloRank(battle[1], auth.currentUser.uid), 1 - idx);
+        let user_player_1 = getNewRating(getEloRank(battle[1], auth.currentUser.uid), getEloRank(battle[0], auth.currentUser.uid), idx);
         const batch = writeBatch(db);
         const key = "rankEloUser." + auth.currentUser.uid;
         const hideKey = "hideUser." + auth.currentUser.uid;

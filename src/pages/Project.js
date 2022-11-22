@@ -26,45 +26,79 @@ const removeAllowedUser = (project, email) => {
     );
 };
 
+const fixProjectUsers = (project) => {
+    // Ensure we have all info we need updated for this user in this project
+    if(project.users === undefined || project.users[auth.currentUser.uid] === undefined) {
+        const docRef = doc(db, "projects", project.id);
+        updateDoc(docRef, {
+            ["users." + auth.currentUser.uid]: {
+                "uid": auth.currentUser.uid,
+                "email": auth.currentUser.email,
+                "displayName": auth.currentUser.displayName
+            }
+        });
+    }
+}
+
 const Project = () => {
     const { id } = useParams();
 
     const [project, setProject] = useState(null);
-    const [firstnames, setFirstnames] = useState([]);
-    const [userFirstnames, setUserFirstnames] = useState([]);
+    const [users, setUsers] = useState(null);
+    const [ranks, setRanks] = useState({"global": []});
     const [totalCount, setTotalCount] = useState([]);
 
     useEffect(() => {
         const docRef = doc(db, "projects", id);
-        onSnapshot(docRef, (docSnap) => {
+        return onSnapshot(docRef, (docSnap) => {
             if(docSnap.exists()) {
-                setProject({id, ...docSnap.data()});
+                const _project = {id, ...docSnap.data()}
+                setProject(_project);
+                fixProjectUsers(_project);
+                let _users = [];
+                Object.keys(_project.users).forEach((value) => { _users.push(value) });
+                setUsers(_users);
             } else {
                 setProject(false);
             }
         });
+    }, [id]);
 
+    useEffect(() => {
+        if(users === null) { return; }
         const q = query(collection(db, "projects", id, "firstnames"));
-        onSnapshot(q, (querySnapshot) => {
-          let results = [];
-          let userResults = [];
+        return onSnapshot(q, (querySnapshot) => {
+          let newRanks = {
+            'global': []
+          };
           let _totalCount = 0;
           querySnapshot.forEach((doc) => {
                 let result = doc.data();
                 result.id = doc.id;
                 _totalCount += 1;
                 if(!result.hide) {
-                    results.push(result);
+                    newRanks['global'].push(result);
                 }
-                if(!getHide(result, auth.currentUser)) {
-                    userResults.push(result);
-                }
+
+                users.forEach((value) => { 
+                    if (newRanks[value] === undefined) {
+                        newRanks[value] = [];
+                    }
+                    if(!getHide(result, value)) {
+                        newRanks[value].push(result);
+                    }
+                 });
           });
           setTotalCount(_totalCount);
-          setFirstnames(results.sort((a, b) => b.rankElo - a.rankElo));
-          setUserFirstnames(userResults.sort((a, b) => getEloRank(b, auth.currentUser) - getEloRank(a, auth.currentUser)));
+          newRanks['global'] = newRanks['global'].sort((a, b) => b.rankElo - a.rankElo);
+          users.forEach((value) => { 
+            if (newRanks[value] !== undefined) {
+                newRanks[value] = newRanks[value].sort((a, b) => getEloRank(b, value) - getEloRank(a, value));
+            }
+          });
+          setRanks(newRanks);
         });
-    }, [id]);
+    }, [id, users]);
 
     if (project === null) {
         return <>Loading...</>;
@@ -82,7 +116,7 @@ const Project = () => {
                 <LinkContainer to={"/projects/"+project.id+"/match"}><Button variant="primary">Launch battle !</Button></LinkContainer><br />
                 <br />
                 Nb firstname loaded : {totalCount} <br />
-                Nb firstname still in competition : {firstnames.length}
+                Nb firstname still in competition : {ranks["global"].length}
             </Row>
             <Row>
                 <Col>
@@ -101,17 +135,19 @@ const Project = () => {
             </Row>
             <Row>
                 <Col>
-                    <h2>Global Rank (Top 20)</h2>
+                    <h2>Global Rank (Top 20/{ranks["global"].length})</h2>
                     <ul>
-                        {firstnames.slice(0,20).map(firstname => <li>{firstname.firstname} - {firstname.rankElo}</li>)}
+                        {ranks["global"].slice(0,20).map(firstname => <li>{firstname.firstname} - {firstname.rankElo}</li>)}
                     </ul>
                 </Col>
-                <Col>
-                    <h2>Your Rank (Top 20)</h2>
-                    <ul>
-                        {userFirstnames.slice(0,20).map(firstname => <li>{firstname.firstname} - {getEloRank(firstname, auth.currentUser)}</li>)}
-                    </ul>
-                </Col>
+                {users.map((userId) => (
+                    <Col>
+                        <h2>Rank {project.users[userId].displayName} (Top 20/{(ranks[userId] || []).length})</h2>
+                        <ul>
+                            {(ranks[userId] || []).slice(0,20).map(firstname => <li>{firstname.firstname} - {getEloRank(firstname, userId)}</li>)}
+                        </ul>
+                    </Col>
+                ))}
             </Row>
         </Container>
     </>;

@@ -78,3 +78,8 @@ Note of future topics I have in mind :
 - [x] Clean a little bit navigation, remove useless files...
 - [x] Add preloaded dataset to fill firstnames
 - [x] do a ranking by player (in addition of the global one)
+
+
+### 22th november 2022
+
+- [x] display ranks for all participants in project page
